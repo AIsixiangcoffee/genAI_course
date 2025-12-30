@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - Transformer架构</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch04" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：Transformer架构</h1>
+
+        <div class="deep-content">
+            <h2>自注意力机制可视化</h2>
+            <p>点击任意词语，查看它与其他词语的注意力权重：</p>
+
+            <div id="attentionViz" style="background: var(--bg-tertiary); padding: 30px; border-radius: 10px; margin: 20px 0;">
+                <div id="sentence" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;">
+                </div>
+                <div id="attentionMatrix" style="overflow-x: auto;">
+                    <div id="attentionBars" style="display: flex; gap: 10px; align-items: flex-end; height: 200px; padding: 20px; background: white; border-radius: 8px; min-width: 500px;">
+                    </div>
+                </div>
+            </div>
+
+            <h2>多头注意力演示</h2>
+            <p>同一个句子，不同的注意力头关注不同的方面：</p>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="text-align: center; font-size: 1.1rem; margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px;">
+                    "The bank of the river" vs "The bank with money"
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: var(--primary-color);">🔤 头1：语法关系</div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">关注词性、句法结构</p>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light);">bank → 名词</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: var(--secondary-color);">🌊 头2：语义角色</div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">关注"river"语境</p>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light);">bank ↔ river 强关联</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: var(--accent-color);">💰 头3：上下文</div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">关注"money"语境</p>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light);">bank ↔ money 强关联</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>位置编码原理</h2>
+            <p>Transformer如何知道词语的顺序？</p>
+
+            <div class="info-box">
+                <h3>正弦/余弦位置编码公式：</h3>
+                <div style="background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 8px; font-family: monospace; margin: 15px 0;">
+                    PE(pos, 2i) = sin(pos / 10000^(2i/d))<br>
+                    PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+                </div>
+                <p>其中 pos 是位置，i 是维度索引。这种设计让模型能轻松学会相对位置关系。</p>
+            </div>
+
+            <h2>编码器 vs 解码器 vs 两者兼有</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">类型</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">代表模型</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">擅长任务</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">特点</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">仅编码器</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">BERT, RoBERTa</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">理解任务</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">分类、标注、NER</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">仅解码器</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">GPT系列, Llama</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">生成任务</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">文本生成、对话</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">编码器-解码器</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">T5, BART</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">序列转换</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">翻译、摘要</td>
+                </tr>
+            </table>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch04-quiz-1">
+                <div class="quiz-question">1. Transformer的核心创新是什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q1" value="0" class="quiz-radio">
+                        <span>RNN（循环神经网络）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q1" value="1" class="quiz-radio">
+                        <span>自注意力机制（Self-Attention）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q1" value="2" class="quiz-radio">
+                        <span>卷积神经网络</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch04-quiz-2">
+                <div class="quiz-question">2. Transformer相比RNN的主要优势是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q2" value="0" class="quiz-radio">
+                        <span>可以逐字顺序阅读</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q2" value="1" class="quiz-radio">
+                        <span>并行处理，速度更快</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q2" value="2" class="quiz-radio">
+                        <span>占用内存更少</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch04-quiz-3">
+                <div class="quiz-question">3. 多头注意力的作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q3" value="0" class="quiz-radio">
+                        <span>让模型一次关注一个词</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q3" value="1" class="quiz-radio">
+                        <span>从多个不同角度同时分析信息</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q3" value="2" class="quiz-radio">
+                        <span>增加模型参数量</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch04-quiz-4">
+                <div class="quiz-question">4. 位置编码的作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q4" value="0" class="quiz-radio">
+                        <span>增加词汇量</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q4" value="1" class="quiz-radio">
+                        <span>让模型掌握词语的顺序</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch04q4" value="2" class="quiz-radio">
+                        <span>提高计算速度</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 自注意力可视化
+        const sentence = ['我', '爱', '吃', '苹果'];
+        const attentionWeights = {
+            '我': [0.8, 0.1, 0.05, 0.05],
+            '爱': [0.3, 0.5, 0.15, 0.05],
+            '吃': [0.1, 0.2, 0.4, 0.3],
+            '苹果': [0.05, 0.05, 0.3, 0.6]
+        };
+
+        function renderSentence() {
+            const container = document.getElementById('sentence');
+            container.innerHTML = '';
+
+            sentence.forEach((word, idx) => {
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.dataset.idx = idx;
+                span.style.cssText = `
+                    padding: 10px 18px;
+                    background: white;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    border: 2px solid var(--border-color);
+                    transition: all 0.2s;
+                `;
+
+                span.addEventListener('click', () => showAttention(idx));
+                span.addEventListener('mouseenter', () => {
+                    span.style.borderColor = 'var(--primary-color)';
+                    span.style.background = 'rgba(37, 99, 235, 0.1)';
+                });
+                span.addEventListener('mouseleave', () => {
+                    if (parseInt(span.dataset.idx) !== currentSelected) {
+                        span.style.borderColor = 'var(--border-color)';
+                        span.style.background = 'white';
+                    }
+                });
+
+                container.appendChild(span);
+            });
+        }
+
+        let currentSelected = -1;
+
+        function showAttention(idx) {
+            currentSelected = idx;
+            const weights = attentionWeights[sentence[idx]];
+            const barsContainer = document.getElementById('attentionBars');
+            barsContainer.innerHTML = '';
+
+            // 更新词语样式
+            document.querySelectorAll('#sentence span').forEach((span, i) => {
+                if (i === idx) {
+                    span.style.borderColor = 'var(--primary-color)';
+                    span.style.background = 'rgba(37, 99, 235, 0.2)';
+                } else {
+                    span.style.borderColor = 'var(--border-color)';
+                    span.style.background = 'white';
+                }
+            });
+
+            // 创建注意力柱
+            const colors = ['#2563eb', '#7c3aed', '#06b6d4', '#10b981'];
+
+            sentence.forEach((word, i) => {
+                const weight = weights[i];
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    flex: 1;
+                    background: linear-gradient(to top, ${colors[i]}, ${colors[i]}88);
+                    border-radius: 6px 6px 0 0;
+                    position: relative;
+                    transition: height 0.3s ease;
+                    height: ${weight * 150}px;
+                    min-height: 30px;
+                `;
+
+                const label = document.createElement('div');
+                label.textContent = word;
+                label.style.cssText = `
+                    position: absolute;
+                    bottom: -25px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                `;
+
+                const weightLabel = document.createElement('div');
+                weightLabel.textContent = (weight * 100).toFixed(0) + '%';
+                weightLabel.style.cssText = `
+                    position: absolute;
+                    top: -20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                `;
+
+                bar.appendChild(label);
+                bar.appendChild(weightLabel);
+                barsContainer.appendChild(bar);
+            });
+        }
+
+        renderSentence();
+        showAttention(3); // 默认选中"苹果"
+
+        // 章节测验逻辑
+        const ch04QuizAnswers = {
+            'ch04-quiz-1': { correct: '1', explanation: '正确！Transformer的核心创新是自注意力机制（Self-Attention）。它让模型能够同时关注输入序列中的所有位置，捕捉长距离依赖关系，这是相对于RNN的革命性突破。' },
+            'ch04-quiz-2': { correct: '1', explanation: '正确！Transformer相比RNN的主要优势是可以并行处理。RNN需要顺序处理每个词，而Transformer可以同时处理整个序列，速度大大提升。' },
+            'ch04-quiz-3': { correct: '1', explanation: '正确！多头注意力让模型从多个不同角度同时分析信息。例如，一个头关注语法关系，另一个头关注语义关联，就像用多盏灯照亮不同角落。' },
+            'ch04-quiz-4': { correct: '1', explanation: '正确！位置编码让模型掌握词语的顺序。由于Transformer本质上是并行处理的，需要额外注入位置信息，才能理解词语的先后顺序。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch04QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

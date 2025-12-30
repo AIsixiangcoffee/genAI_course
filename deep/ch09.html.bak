@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - AI智能体</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch09" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：AI智能体</h1>
+
+        <div class="deep-content">
+            <h2>Agent工作流可视化</h2>
+            <p>观看AI智能体如何执行任务：</p>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div class="form-group">
+                    <label class="form-label">输入任务</label>
+                    <input id="agentInput" class="form-input" type="text" placeholder="例如：帮我查询上海明天的天气" value="帮我查询上海明天的天气">
+                </div>
+                <button id="agentBtn" class="btn-generate">🤖 执行Agent</button>
+                <div id="agentResult" style="margin-top: 20px;"></div>
+            </div>
+
+            <h2>Agent组件详解</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">👁️</div>
+                    <h3 style="color: var(--primary-color);">感知</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">接收和理解外部信息</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
+                    <h3 style="color: var(--secondary-color);">规划</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">分解任务，制定计划</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">💾</div>
+                    <h3 style="color: var(--accent-color);">记忆</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">存储和检索信息</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🔧</div>
+                    <h3 style="color: var(--success-color);">工具</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">调用外部工具和API</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">⚡</div>
+                    <h3 style="color: var(--warning-color);">行动</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">执行具体操作</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🔄</div>
+                    <h3 style="color: #ef4444;">反思</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">评估并调整策略</p>
+                </div>
+            </div>
+
+            <h2>Agent代码示例（LangChain）</h2>
+
+            <div class="code-demo">
+                <div class="code-header">
+                    <span class="code-title">简单Agent实现</span>
+                    <button class="copy-btn" data-copy-target="code-agent">复制代码</button>
+                </div>
+                <pre class="code-block" id="code-agent"><code><span class="code-keyword">from</span> langchain.agents <span class="code-keyword">import</span> initialize_agent, Tool, AgentType
+<span class="code-keyword">from</span> langchain.tools <span class="code-keyword">import</span> DuckDuckGoSearchRun
+<span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+
+<span class="code-comment"># 初始化LLM</span>
+llm = ChatOpenAI(model=<span class="code-string">"gpt-3.5-turbo"</span>)
+
+<span class="code-comment"># 定义工具</span>
+search = DuckDuckGoSearchRun()
+tools = [
+    Tool(
+        name=<span class="code-string">"Search"</span>,
+        func=search.<span class="code-function">run</span>,
+        description=<span class="code-string">"用于搜索最新信息"</span>
+    )
+]
+
+<span class="code-comment"># 创建Agent</span>
+agent = <span class="code-function">initialize_agent</span>(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># 执行任务</span>
+task = <span class="code-string">"搜索最新的AI新闻"</span>
+result = agent.<span class="code-function">run</span>(task)
+<span class="code-function">print</span>(result)</code></pre>
+            </div>
+
+            <h2>ReAct模式</h2>
+            <p>Agent常用的推理-行动循环：</p>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong style="color: var(--primary-color);">🤔 Thought（思考）</strong>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">我需要查询上海的天气信息</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong style="color: var(--secondary-color);">🎯 Action（行动）</strong>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">调用天气查询工具：get_weather("上海")</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong style="color: var(--accent-color);">📊 Observation（观察）</strong>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">工具返回：明天上海多云，气温18-25℃</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong style="color: var(--success-color);">🤔 Thought（思考）</strong>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">我已经获得了所需信息，可以回答用户了</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong style="color: var(--warning-color);">✅ Finish（完成）</strong>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">向用户返回答案</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch09-quiz-1">
+                <div class="quiz-question">1. AI智能体（Agent）的核心特征是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q1" value="0" class="quiz-radio">
+                        <span>只能回答问题</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q1" value="1" class="quiz-radio">
+                        <span>能够感知、规划、行动、反思的自主系统</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q1" value="2" class="quiz-radio">
+                        <span>需要人工持续干预</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch09-quiz-2">
+                <div class="quiz-question">2. ReAct模式中的循环是指？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q2" value="0" class="quiz-radio">
+                        <span>重复相同动作</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q2" value="1" class="quiz-radio">
+                        <span>思考 → 行动 → 观察的循环迭代</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q2" value="2" class="quiz-radio">
+                        <span>重新开始任务</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch09-quiz-3">
+                <div class="quiz-question">3. Agent的"工具"（Tools）组件的作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q3" value="0" class="quiz-radio">
+                        <span>存储信息</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q3" value="1" class="quiz-radio">
+                        <span>调用外部API和服务，扩展Agent能力</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q3" value="2" class="quiz-radio">
+                        <span>生成文本</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch09-quiz-4">
+                <div class="quiz-question">4. Agent与传统LLM对话的主要区别是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q4" value="0" class="quiz-radio">
+                        <span>没有区别</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q4" value="1" class="quiz-radio">
+                        <span>Agent能主动规划和执行多步骤任务</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch09q4" value="2" class="quiz-radio">
+                        <span>传统LLM更智能</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Agent演示
+        let step = 0;
+        const steps = [
+            { thought: '理解用户意图：这是一个天气查询请求', action: '分解任务：1.识别城市 2.调用天气API', type: 'plan' },
+            { thought: '识别到城市：上海', action: '选择工具：get_weather API', type: 'tool' },
+            { thought: '调用天气API', action: '执行：get_weather("上海", "明天")', type: 'action' },
+            { thought: '获得API响应', action: '结果：明天上海多云，18-25℃', type: 'observe' },
+            { thought: '任务完成', action: '生成最终回答', type: 'finish' }
+        ];
+
+        document.getElementById('agentBtn').addEventListener('click', () => {
+            const input = document.getElementById('agentInput').value;
+            const result = document.getElementById('agentResult');
+            step = 0;
+
+            result.innerHTML = '<div style="text-align: center; padding: 20px;"><strong>🤖 Agent开始执行任务...</strong></div>';
+
+            function showNextStep() {
+                if (step >= steps.length) {
+                    result.innerHTML += `
+                        <div style="background: #dcfce7; padding: 20px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                            <strong>✅ 任务完成！</strong>
+                            <p style="margin-top: 10px;">最终回答：根据查询结果，明天上海多云，气温18-25摄氏度，建议适当增添衣物。</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const s = steps[step];
+                const colors = {
+                    plan: '#2563eb',
+                    tool: '#7c3aed',
+                    action: '#06b6d4',
+                    observe: '#10b981',
+                    finish: '#f59e0b'
+                };
+
+                result.innerHTML += `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid ${colors[s.type]};">
+                        <div style="color: ${colors[s.type]}; font-weight: 600; margin-bottom: 5px;">🤔 思考 ${step + 1}</div>
+                        <p style="font-size: 0.95rem;">${s.thought}</p>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                            <strong>行动：</strong>${s.action}
+                        </div>
+                    </div>
+                `;
+
+                step++;
+                setTimeout(showNextStep, 1500);
+            }
+
+            showNextStep();
+        });
+
+        // 章节测验逻辑
+        const ch09QuizAnswers = {
+            'ch09-quiz-1': { correct: '1', explanation: '正确！AI智能体是能够感知、规划、行动、反思的自主系统。它不仅能回答问题，还能主动分解任务、调用工具、执行多步骤操作。' },
+            'ch09-quiz-2': { correct: '1', explanation: '正确！ReAct模式是指推理-行动循环：Agent先思考（Thought），再行动（Action），然后观察结果（Observation），如此循环直到任务完成。' },
+            'ch09-quiz-3': { correct: '1', explanation: '正确！Agent的工具组件用于调用外部API和服务，如搜索引擎、天气API、数据库等，以此扩展Agent的能力边界。' },
+            'ch09-quiz-4': { correct: '1', explanation: '正确！Agent能主动规划和执行多步骤任务，而传统LLM只是被动响应当前对话。Agent具备更强的自主性和任务执行能力。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch09QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 小语言模型</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch11" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：小语言模型</h1>
+
+        <div class="deep-content">
+            <h2>模型选择决策树</h2>
+            <p>根据你的需求选择合适的模型：</p>
+
+            <div id="modelSelector" style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div id="decisionTree">
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h3 style="margin-bottom: 15px;">选择你的应用场景</h3>
+                        <div style="display: grid; gap: 10px; max-width: 400px; margin: 0 auto;">
+                            <button class="scenario-btn" data-scenario="mobile" style="padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">📱 移动应用</button>
+                            <button class="scenario-btn" data-scenario="complex" style="padding: 12px; background: var(--secondary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">🧠 复杂推理</button>
+                            <button class="scenario-btn" data-scenario="professional" style="padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer;">💼 专业任务</button>
+                            <button class="scenario-btn" data-scenario="general" style="padding: 12px; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer;">🤖 通用助手</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="recommendation" style="display: none; margin-top: 20px;">
+                </div>
+            </div>
+
+            <h2>代表性小模型对比</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">模型</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">参数量</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">特点</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">适用场景</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Phi-3</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">3.8B</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">高质量数据训练</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">移动设备部署</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Gemma 2</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">2B/9B</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Google开源</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">研究和商业应用</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Llama 3.2</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">1B/3B</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">边缘计算优化</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">端侧部署</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Qwen2.5</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">0.5B-72B</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">中文优化</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">中文应用</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">DeepSeek-V3</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">支持多种规模</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">MoE架构</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">高效推理</td>
+                </tr>
+            </table>
+
+            <h2>模型优化技术</h2>
+
+            <div style="display: grid; gap: 15px; margin: 20px 0;">
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary-color);">
+                    <h3 style="color: var(--primary-color);">🎓 知识蒸馏 (Knowledge Distillation)</h3>
+                    <p style="margin: 10px 0; font-size: 0.95rem;">让小模型学习大模型的知识。大模型作为"教师"，小模型作为"学生"，通过模仿教师模型的输出来学习。</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--secondary-color);">
+                    <h3 style="color: var(--secondary-color);">✂️ 模型剪枝 (Pruning)</h3>
+                    <p style="margin: 10px 0; font-size: 0.95rem;">移除模型中不重要的参数或连接。结构化剪枝可以移除整个神经元或层，非结构化剪枝移除单个权重。</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--accent-color);">
+                    <h3 style="color: var(--accent-color);">🔢 量化 (Quantization)</h3>
+                    <p style="margin: 10px 0; font-size: 0.95rem;">降低模型精度，如从FP32（32位浮点）降到INT8（8位整数），可显著减少模型大小和内存占用。</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--success-color);">
+                    <h3 style="color: var(--success-color);">⚡ 高效架构</h3>
+                    <p style="margin: 10px 0; font-size: 0.95rem;">使用更高效的模型架构，如Mistral（滑动窗口注意力）、Mamba（状态空间模型）等。</p>
+                </div>
+            </div>
+
+            <h2>端侧AI部署</h2>
+
+            <div class="info-box">
+                <h3>为什么小模型适合端侧部署？</h3>
+                <ul>
+                    <li><strong>低延迟：</strong>无需网络请求，即时响应</li>
+                    <li><strong>隐私保护：</strong>数据不离开设备</li>
+                    <li><strong>离线可用：</strong>无网络时也能使用</li>
+                    <li><strong>成本低：</strong>无云端API调用费用</li>
+                </ul>
+            </div>
+
+            <h2>未来展望</h2>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong>🌐 多模态小模型</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">轻量级的多模态能力，支持文本、图像、音频</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong>📱 端侧AI生态</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">更多手机、PC内置AI加速芯片</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong>🔀 混合部署</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">大小模型协同工作，边缘+云端</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <strong>🌟 开源社区</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">更多高质量小模型开源</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch11-quiz-1">
+                <div class="quiz-question">1. 小语言模型（SLM）的主要优势是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q1" value="0" class="quiz-radio">
+                        <span>参数更大，性能更强</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q1" value="1" class="quiz-radio">
+                        <span>轻量高效，适合端侧部署</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q1" value="2" class="quiz-radio">
+                        <span>训练成本更高</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch11-quiz-2">
+                <div class="quiz-question">2. 知识蒸馏（Knowledge Distillation）的原理是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q2" value="0" class="quiz-radio">
+                        <span>小模型作为教师，大模型作为学生</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q2" value="1" class="quiz-radio">
+                        <span>大模型作为教师，小模型作为学生</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q2" value="2" class="quiz-radio">
+                        <span>两个模型独立训练</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch11-quiz-3">
+                <div class="quiz-question">3. 量化（Quantization）的主要作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q3" value="0" class="quiz-radio">
+                        <span>提高模型精度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q3" value="1" class="quiz-radio">
+                        <span>降低模型精度，减小模型大小和内存占用</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q3" value="2" class="quiz-radio">
+                        <span>增加模型参数</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch11-quiz-4">
+                <div class="quiz-question">4. 何时应该选择小语言模型？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q4" value="0" class="quiz-radio">
+                        <span>需要复杂推理和广泛知识</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q4" value="1" class="quiz-radio">
+                        <span>资源受限、需要端侧部署或离线运行</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch11q4" value="2" class="quiz-radio">
+                        <span>需要最佳性能</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html#ch11" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 模型选择决策树
+        const recommendations = {
+            mobile: {
+                model: '小语言模型 (SLM)',
+                examples: ['Phi-3', 'Gemma 2B', 'Llama 3.2 1B/3B'],
+                reasons: ['资源受限，需要离线运行', '响应速度快', '隐私保护']
+            },
+            complex: {
+                model: '大语言模型 (LLM)',
+                examples: ['GPT-4', 'Claude', 'DeepSeek-V3'],
+                reasons: ['需要强大的推理能力', '知识覆盖广', '理解复杂上下文']
+            },
+            professional: {
+                model: '微调的小模型',
+                examples: ['微调后的Qwen', '专业领域Llama'],
+                reasons: ['性价比高', '针对特定任务优化', '性能优秀']
+            },
+            general: {
+                model: '大语言模型 (LLM)',
+                examples: ['ChatGPT', 'Claude', '文心一言'],
+                reasons: ['需要广泛的知识', '多样的能力', '通用性强']
+            }
+        };
+
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const scenario = btn.dataset.scenario;
+                const rec = recommendations[scenario];
+                const resultDiv = document.getElementById('recommendation');
+
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <h3 style="margin-bottom: 15px;">💡 推荐方案</h3>
+                        <div style="margin-bottom: 15px;">
+                            <strong>推荐模型类型：</strong>
+                            <span style="color: var(--primary-color); font-size: 1.1rem;">${rec.model}</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong>代表模型：</strong>
+                            <div style="margin-top: 8px;">
+                                ${rec.examples.map(ex => `<span style="display: inline-block; padding: 5px 12px; background: var(--bg-tertiary); border-radius: 15px; margin: 3px; font-size: 0.9rem;">${ex}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <strong>推荐理由：</strong>
+                            <ul style="margin-top: 8px; padding-left: 20px;">
+                                ${rec.reasons.map(r => `<li>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        // 章节测验逻辑
+        const ch11QuizAnswers = {
+            'ch11-quiz-1': { correct: '1', explanation: '正确！小语言模型的主要优势是轻量高效，适合端侧部署。它们在手机、PC等设备上就能运行，提供低延迟、隐私保护、离线可用的能力。' },
+            'ch11-quiz-2': { correct: '1', explanation: '正确！知识蒸馏是大模型作为教师，小模型作为学生。小模型通过学习大模型的输出（软标签）来获得类似性能，但参数量更小。' },
+            'ch11-quiz-3': { correct: '1', explanation: '正确！量化通过降低模型精度（如从FP32降到INT8）来减小模型大小和内存占用。虽然精度略降，但通常性能影响很小，却能大幅节省资源。' },
+            'ch11-quiz-4': { correct: '1', explanation: '正确！当资源受限、需要端侧部署或离线运行时，应该选择小语言模型。如果需要复杂推理和广泛知识，则应该选择大语言模型。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch11QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

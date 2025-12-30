@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 生成式AI概述</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch01" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：生成式AI概述</h1>
+
+        <div class="deep-content">
+            <h2>AI发展时间线</h2>
+            <p>让我们回顾一下人工智能发展的关键里程碑：</p>
+
+            <div class="timeline" style="margin: 30px 0; padding-left: 20px; border-left: 3px solid var(--primary-color);">
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">1958年</strong>
+                    <p>感知机（Perceptron）诞生，被称为"能自主思考的机器"</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">1969年</strong>
+                    <p>数学证明感知机解决不了"异或"问题，AI进入第一次寒冬</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">1986年</strong>
+                    <p>Hinton提出反向传播算法，神经网络再次兴起</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">1997年</strong>
+                    <p>IBM深蓝击败国际象棋世界冠军卡斯帕罗夫</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">2006年</strong>
+                    <p>Hinton将"神经网络"改名为"深度学习"</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">2012年</strong>
+                    <p>AlexNet在ImageNet竞赛夺冠，深度学习时代正式开启</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--primary-color);">2017年</strong>
+                    <p>Google发表《Attention Is All You Need》，Transformer诞生</p>
+                </div>
+                <div style="margin-bottom: 25px; padding-left: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; background: var(--secondary-color); border-radius: 50%;"></div>
+                    <strong style="color: var(--secondary-color);">2022年</strong>
+                    <p>ChatGPT发布，生成式AI引发全球热潮</p>
+                </div>
+            </div>
+
+            <h2>核心概念辨析</h2>
+            <div class="info-box">
+                <h3>生成式AI vs 判别式AI</h3>
+                <ul>
+                    <li><strong>判别式AI：</strong>从输入中识别模式，进行分类或预测（如图像分类、垃圾邮件检测）</li>
+                    <li><strong>生成式AI：</strong>创造新的内容（如文本、图像、音频、视频）</li>
+                </ul>
+            </div>
+
+            <h2>小测验：检验你的理解</h2>
+
+            <div class="quiz-container" data-quiz-id="ch01-quiz-1">
+                <div class="quiz-question">1. 以下哪个不是AI的三大法宝？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="0" class="quiz-radio">
+                        <span>算力</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="1" class="quiz-radio">
+                        <span>算法</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="2" class="quiz-radio">
+                        <span>数据</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="3" class="quiz-radio">
+                        <span>魔法</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch01-quiz-2">
+                <div class="quiz-question">2. "神经网络"改名为"深度学习"主要因为什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="0" class="quiz-radio">
+                        <span>因为神经网络听起来不够酷</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="1" class="quiz-radio">
+                        <span>强调模型的"深度"（层数多）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="2" class="quiz-radio">
+                        <span>因为原来的名字被注册了商标</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch01-quiz-3">
+                <div class="quiz-question">3. 以下哪一项不属于AI发展的三大法宝？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="0" class="quiz-radio">
+                        <span>算法（反向传播）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="1" class="quiz-radio">
+                        <span>数据（ImageNet）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="2" class="quiz-radio">
+                        <span>算力（GPU）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="3" class="quiz-radio">
+                        <span>魔法</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch01-quiz-4">
+                <div class="quiz-question">4. 深度学习的"深度"指的是什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="0" class="quiz-radio">
+                        <span>模型的复杂程度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="1" class="quiz-radio">
+                        <span>隐藏层的数量（层数多）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="2" class="quiz-radio">
+                        <span>模型的学习深度</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch01-quiz-5">
+                <div class="quiz-question">5. AlexNet在哪一年的ImageNet竞赛中引发了深度学习热潮？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="0" class="quiz-radio">
+                        <span>2006年</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="1" class="quiz-radio">
+                        <span>2010年</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="2" class="quiz-radio">
+                        <span>2012年</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="3" class="quiz-radio">
+                        <span>2014年</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <h2>思考题</h2>
+            <div class="warning-box">
+                <strong>深度思考：</strong>
+                <p>你认为生成式AI未来会如何改变我们的生活？有哪些潜在的风险需要我们关注？</p>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 自定义测验逻辑
+        const quizAnswers = {
+            'ch01-quiz-1': { correct: '3', explanation: '正确！AI的三大法宝是算力、算法和数据，没有"魔法"这一说。AI的发展是靠实实在在的技术积累。' },
+            'ch01-quiz-2': { correct: '1', explanation: '正确！改名是为了强调模型的"深度"——即隐藏层的数量多。同时也要和过气的"神经网络"划清界限。' },
+            'ch01-quiz-3': { correct: '3', explanation: '正确！AI的三大法宝是算力、算法和数据。"魔法"不是真实的技术要素。' },
+            'ch01-quiz-4': { correct: '1', explanation: '正确！"深度"指的是隐藏层的数量多。Hinton团队把神经网络变得非常深，例如用10层以上的网络结构。' },
+            'ch01-quiz-5': { correct: '2', explanation: '正确！2012年，AlexNet在ImageNet竞赛中碾压所有传统方法，错误率从26%暴跌到15%，深度学习时代正式开启。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = quizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

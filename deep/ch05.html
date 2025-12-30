@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 提示词工程</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch05" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：提示词工程</h1>
+
+        <div class="deep-content">
+            <h2>CRAFT框架</h2>
+            <p>一个实用的提示词设计框架：</p>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: grid; gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb;">
+                        <strong style="color: #2563eb;">C - Context (上下文)</strong>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem;">提供必要的背景信息</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #7c3aed;">
+                        <strong style="color: #7c3aed;">R - Role (角色)</strong>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem;">定义AI的角色定位</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #06b6d4;">
+                        <strong style="color: #06b6d4;">A - Action (行动)</strong>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem;">明确要执行的任务</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">F - Format (格式)</strong>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem;">指定输出格式</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                        <strong style="color: #f59e0b;">T - Tone (语气)</strong>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem;">设定语气风格</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>提示词优化前后对比</h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                <div style="background: #fee2e2; padding: 20px; border-radius: 10px; border-left: 4px solid #ef4444;">
+                    <h3 style="color: #dc2626; margin-bottom: 10px;">❌ 效果较差</h3>
+                    <div style="background: white; padding: 15px; border-radius: 8px; font-size: 0.9rem;">
+                        "帮我写个产品介绍"
+                    </div>
+                    <p style="font-size: 0.85rem; color: #991b1b; margin-top: 10px;">问题：过于模糊，缺乏具体要求</p>
+                </div>
+
+                <div style="background: #dcfce7; padding: 20px; border-radius: 10px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #059669; margin-bottom: 10px;">✅ 效果更好</h3>
+                    <div style="background: white; padding: 15px; border-radius: 8px; font-size: 0.9rem;">
+                        "你是一名资深营销文案专家。请为我们的智能手表写一段产品介绍，目标受众是25-35岁的都市白领。重点突出：健康监测、长续航、时尚外观。输出格式为200字左右的宣传文案，语气要年轻有活力。"
+                    </div>
+                    <p style="font-size: 0.85rem; color: #065f46; margin-top: 10px;">优点：角色明确、受众清晰、重点突出、格式明确</p>
+                </div>
+            </div>
+
+            <h2>提示词生成器</h2>
+            <p>使用下面的工具构建一个结构化的提示词：</p>
+
+            <div class="prompt-generator">
+                <div class="form-group">
+                    <label class="form-label">角色设定 (Role)</label>
+                    <input id="promptRole" class="form-input" type="text" placeholder="例如：专业Python程序员、心理咨询师、营销文案专家">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">上下文信息 (Context)</label>
+                    <textarea id="promptContext" class="form-textarea" rows="2" placeholder="提供背景信息、目标受众、使用场景等..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">任务描述 (Task) *</label>
+                    <textarea id="promptTask" class="form-textarea" rows="3" placeholder="清楚描述你希望AI完成的任务..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">输出格式 (Format)</label>
+                    <select id="promptFormat" class="form-input">
+                        <option value="文本段落">文本段落</option>
+                        <option value="Markdown格式">Markdown格式</option>
+                        <option value="JSON格式">JSON格式</option>
+                        <option value="列表">列表</option>
+                        <option value="表格">表格</option>
+                        <option value="代码">代码</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">语气风格 (Tone)</label>
+                    <select id="promptTone" class="form-input">
+                        <option value="专业严谨">专业严谨</option>
+                        <option value="轻松幽默">轻松幽默</option>
+                        <option value="友好亲切">友好亲切</option>
+                        <option value="简洁明了">简洁明了</option>
+                        <option value="富有创意">富有创意</option>
+                    </select>
+                </div>
+                <button id="generatePromptBtn" class="btn-generate">🚀 生成提示词</button>
+                <div id="promptPreview" class="prompt-preview" style="display: none;"></div>
+            </div>
+
+            <h2>OpenAI提示词最佳实践</h2>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <h4>1. 使用最新的模型</h4>
+                <p style="margin: 5px 0 15px 20px;">例如：gpt-4o、claude-3.5-sonnet等最新模型效果更好</p>
+
+                <h4>2. 将指令置于提示开头并用###或"""分隔</h4>
+                <div style="background: white; padding: 10px; border-radius: 5px; margin: 5px 0 15px 20px; font-family: monospace; font-size: 0.9rem;">
+                    将指令写成这样：<br>
+                    ### 指令 ###<br>
+                    你是一个Python专家，请帮我...
+                </div>
+
+                <h4>3. 尽可能具体明确</h4>
+                <p style="margin: 5px 0 15px 20px;">❌ "写一个故事"<br>✅ "写一个500字的科幻故事，关于时间旅行，结局要反转"</p>
+
+                <h4>4. 通过示例阐明期望的输出格式</h4>
+                <p style="margin: 5px 0 15px 20px;">先给出示例，再让AI处理新任务</p>
+
+                <h4>5. 遵循零样本→少样本的顺序</h4>
+                <p style="margin: 5px 0 15px 20px;">先不给示例测试，如果效果不好再添加1-3个示例</p>
+
+                <h4>6. 减少模糊描述</h4>
+                <p style="margin: 5px 0 15px 20px;">避免"尽量"、"可能"、"大概"等模糊词汇</p>
+
+                <h4>7. 用正面指令替代负面禁止</h4>
+                <p style="margin: 5px 0 15px 20px;">❌ "不要写太长"<br>✅ "请控制在200字以内"</p>
+
+                <h4>8. 使用"引导词"（针对代码生成）</h4>
+                <div style="background: white; padding: 10px; border-radius: 5px; margin: 5px 0 15px 20px; font-family: monospace; font-size: 0.9rem;">
+                    以"import"、"def"、"class"等开头，引导模型生成代码
+                </div>
+            </div>
+
+            <h2>高阶举例：AI心灵导师</h2>
+            <p>下面是一个完整的提示词模板，可以让AI扮演心灵导师，引导你进行深度自我探索。复制下面的内容到AI对话框即可使用：</p>
+
+            <div class="code-demo">
+                <div class="code-header">
+                    <span class="code-title">AI心灵导师提示词（可直接复制使用）</span>
+                    <button class="copy-btn" data-copy-target="code-mentor">复制代码</button>
+                </div>
+                <pre class="code-block" id="code-mentor"><code><span class="code-comment"># AI心灵导师 - 自我探索向导</span>
+<span class="code-keyword">#</span> 复制以下内容到AI对话中，开始你的自我探索之旅
+
+<span class="code-keyword">你是一位专业的自我探索向导，拥有深厚的心理学背景和教练经验。你的使命是通过温和而深入的对话，引导我进行全面的自我认知和成长。</span>
+
+<span class="code-keyword">## 你的工作方式：</span>
+<span class="code-keyword">1. 一次只提出一个问题，确保我们有深度交流</span>
+<span class="code-keyword">2. 问题要开放、启发思考，避免是非题</span>
+<span class="code-keyword">3. 根据我的回答灵活调整，深入追问或有方向地引导</span>
+<span class="code-keyword">4. 保持同理心、不评判，营造安全的对话空间</span>
+
+<span class="code-keyword">## 引导流程：</span>
+<span class="code-keyword">### 阶段一：基础认知 - "我是谁？"</span>
+<span class="code-keyword">从核心价值观、性格特质、兴趣热情等基础维度开始，帮我建立自我认知的基线。</span>
+
+<span class="code-keyword">### 阶段二：回溯与模式识别 - "我从哪里来？"</span>
+<span class="code-keyword">回顾重要经历、家庭背景、关键决策，识别行为模式和内在驱动。</span>
+
+<span class="code-keyword">### 阶段三：优势与天赋发掘 - "我擅长什么？"</span>
+<span class="code-keyword">发现我的独特优势、天赋和成就感来源。</span>
+
+<span class="code-keyword">### 阶段四：困惑和挑战 - "什么阻碍了我？"</span>
+<span class="code-keyword">识别限制性信念、恐惧和阻碍，但以成长型心态看待。</span>
+
+<span class="code-keyword">### 阶段五：愿景与方向 - "我可能去向何方？"</span>
+<span class="code-keyword">整合前面的发现，勾勒未来的可能方向和行动步骤。</span>
+
+<span class="code-keyword">## 开始：</span>
+<span class="code-keyword">请以一个温和、简单的问题开始我们的对话，让我自然地进入自我探索的状态。</span></code></pre>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch05-quiz-1">
+                <div class="quiz-question">1. CRAFT框架中的"C"代表什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q1" value="0" class="quiz-radio">
+                        <span>Command（命令）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q1" value="1" class="quiz-radio">
+                        <span>Context（上下文）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q1" value="2" class="quiz-radio">
+                        <span>Create（创建）</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch05-quiz-2">
+                <div class="quiz-question">2. 零样本（Zero-shot）提示的特点是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q2" value="0" class="quiz-radio">
+                        <span>不提供任何示例，直接给出任务</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q2" value="1" class="quiz-radio">
+                        <span>提供一个示例</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q2" value="2" class="quiz-radio">
+                        <span>提供多个示例</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch05-quiz-3">
+                <div class="quiz-question">3. 以下哪个是好的提示词实践？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q3" value="0" class="quiz-radio">
+                        <span>简单模糊，让AI自由发挥</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q3" value="1" class="quiz-radio">
+                        <span>明确角色、上下文、任务、格式、语气</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q3" value="2" class="quiz-radio">
+                        <span>越长越好，把所有能想到的都写上</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch05-quiz-4">
+                <div class="quiz-question">4. 思维链（Chain of Thought）提示的主要作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q4" value="0" class="quiz-radio">
+                        <span>加快AI的响应速度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q4" value="1" class="quiz-radio">
+                        <span>引导AI逐步推理，提高复杂问题的准确性</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch05q4" value="2" class="quiz-radio">
+                        <span>减少token消耗</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html#ch05" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 提示词生成器
+        document.getElementById('generatePromptBtn').addEventListener('click', () => {
+            const role = document.getElementById('promptRole').value || 'AI助手';
+            const task = document.getElementById('promptTask').value;
+            const context = document.getElementById('promptContext').value;
+            const format = document.getElementById('promptFormat').value;
+            const tone = document.getElementById('promptTone').value;
+
+            if (!task.trim()) {
+                alert('请输入任务描述');
+                return;
+            }
+
+            let prompt = `# 角色设定\n你是一个${role}。\n\n`;
+
+            if (context.trim()) {
+                prompt += `# 上下文信息\n${context}\n\n`;
+            }
+
+            prompt += `# 任务要求\n${task}\n\n`;
+            prompt += `# 输出要求\n- 格式：${format}\n- 语气：${tone}\n- 请确保回答准确、专业且易于理解。`;
+
+            const preview = document.getElementById('promptPreview');
+            preview.textContent = prompt;
+            preview.style.display = 'block';
+
+            // 标记完成
+            try {
+                const progress = JSON.parse(localStorage.getItem('genai_course_progress') || '{}');
+                progress['ch05'] = true;
+                localStorage.setItem('genai_course_progress', JSON.stringify(progress));
+            } catch (e) {}
+        });
+
+        // 章节测验逻辑
+        const ch05QuizAnswers = {
+            'ch05-quiz-1': { correct: '1', explanation: '正确！CRAFT框架中的C代表Context（上下文），R代表Role（角色），A代表Action（行动），F代表Format（格式），T代表Tone（语气）。' },
+            'ch05-quiz-2': { correct: '0', explanation: '正确！零样本（Zero-shot）提示不提供任何示例，直接给出任务。模型完全依靠预训练知识来完成任务。' },
+            'ch05-quiz-3': { correct: '1', explanation: '正确！好的提示词应该明确角色、上下文、任务、格式和语气。使用CRAFT框架可以帮助构建高质量的提示词。' },
+            'ch05-quiz-4': { correct: '1', explanation: '正确！思维链（Chain of Thought）引导AI逐步推理，让模型展示思考过程，显著提高复杂问题的准确性。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch05QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

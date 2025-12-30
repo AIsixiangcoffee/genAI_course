@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 大语言模型原理</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch02" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：大语言模型原理</h1>
+
+        <div class="deep-content">
+            <h2>Token计算器</h2>
+            <p>输入一段文本，看看它会被拆分成多少个token：</p>
+
+            <div class="prompt-generator">
+                <div class="form-group">
+                    <label class="form-label">输入文本</label>
+                    <textarea id="tokenInput" class="form-textarea" rows="3" placeholder="请输入一段中文或英文文本...">你好，世界！</textarea>
+                </div>
+                <button id="tokenCountBtn" class="btn-generate">计算Token数量</button>
+                <div id="tokenResult" class="prompt-preview" style="display: none;"></div>
+            </div>
+
+            <h2>文字接龙演示</h2>
+            <p>体验LLM的工作原理——逐字预测：</p>
+
+            <div class="prompt-generator">
+                <div class="form-group">
+                    <label class="form-label">输入开头</label>
+                    <input id="chainInput" class="form-input" type="text" value="今天天气" placeholder="输入一个句子开头..." readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">温度参数 (0-1)</label>
+                    <input id="tempInput" class="form-input" type="range" min="0" max="1" step="0.1" value="0.7" style="width: 100%;">
+                    <div style="text-align: center; margin-top: 5px;">
+                        <span id="tempValue">0.7</span>
+                    </div>
+                </div>
+                <button id="chainBtn" class="btn-generate">开始文字接龙</button>
+                <div id="chainResult" class="prompt-preview" style="display: none;"></div>
+            </div>
+
+            <h2>Temperature参数可视化</h2>
+            <p>观察不同温度参数下的概率分布变化：</p>
+
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <div style="margin-bottom: 15px;">
+                    <label class="form-label">温度参数： <span id="tempDisplay">0.5</span></label>
+                    <input id="tempSlider" type="range" min="0" max="1" step="0.1" value="0.5" style="width: 100%;">
+                </div>
+                <div id="probVisualization" style="display: flex; align-items: flex-end; gap: 10px; height: 200px; padding: 20px; background: white; border-radius: 8px;">
+                    <!-- 动态生成的概率柱 -->
+                </div>
+            </div>
+
+            <h2>开源 vs 闭源模型对比</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">特性</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">开源模型</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">闭源模型</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">成本</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">低（可本地部署）</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">按API调用计费</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">可定制性</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">高</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">低</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">数据隐私</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">数据留在本地</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">数据传输到云端</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">性能</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">持续提升</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">通常最先进</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">代表</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">Llama, Qwen, DeepSeek</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">GPT-4, Claude</td>
+                </tr>
+            </table>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch02-quiz-1">
+                <div class="quiz-question">1. LLM的核心工作原理是什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q1" value="0" class="quiz-radio">
+                        <span>直接生成完整答案</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q1" value="1" class="quiz-radio">
+                        <span>逐字预测下一个token</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q1" value="2" class="quiz-radio">
+                        <span>分析语法结构</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch02-quiz-2">
+                <div class="quiz-question">2. Temperature参数设为0时会发生什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q2" value="0" class="quiz-radio">
+                        <span>输出最随机、最有创意</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q2" value="1" class="quiz-radio">
+                        <span>输出最保守、最确定</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q2" value="2" class="quiz-radio">
+                        <span>不会输出任何内容</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch02-quiz-3">
+                <div class="quiz-question">3. 什么是"幻觉"（Hallucination）？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q3" value="0" class="quiz-radio">
+                        <span>模型生成了超出预期的创意内容</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q3" value="1" class="quiz-radio">
+                        <span>模型编造看似合理但实际错误的信息</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q3" value="2" class="quiz-radio">
+                        <span>模型无法理解输入内容</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch02-quiz-4">
+                <div class="quiz-question">4. 以下哪项不是减少幻觉的方法？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q4" value="0" class="quiz-radio">
+                        <span>调低temperature参数</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q4" value="1" class="quiz-radio">
+                        <span>优化prompt提供精确上下文</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch02q4" value="2" class="quiz-radio">
+                        <span>调高temperature参数增加随机性</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Token计数模拟
+        document.getElementById('tokenCountBtn').addEventListener('click', () => {
+            const input = document.getElementById('tokenInput').value;
+            // 简单模拟：中文约1字1token，英文约4字符1token
+            let tokenCount = 0;
+            const chineseChars = input.match(/[\u4e00-\u9fa5]/g) || [];
+            const nonChinese = input.replace(/[\u4e00-\u9fa5]/g, '');
+
+            tokenCount = chineseChars.length + Math.ceil(nonChinese.length / 4);
+
+            const result = document.getElementById('tokenResult');
+            result.style.display = 'block';
+            result.textContent = `文本长度：${input.length} 字符\n预估Token数：${tokenCount} tokens\n\n注意：这是粗略估算，实际token数量取决于分词器。`;
+        });
+
+        // 温度滑块
+        document.getElementById('tempInput').addEventListener('input', (e) => {
+            document.getElementById('tempValue').textContent = e.target.value;
+        });
+
+        // 文字接龙模拟
+        document.getElementById('chainBtn').addEventListener('click', () => {
+            const input = document.getElementById('chainInput').value;
+            const temp = document.getElementById('tempInput').value;
+            const result = document.getElementById('chainResult');
+
+            // 简单模拟续写
+            const continuations = [
+                '很', '真', '真不错', '不错', '真好', '非常好', '晴朗', '阴天'
+            ];
+
+            let selected;
+            if (temp < 0.3) {
+                // 低温：选择最常见的
+                selected = continuations[0];
+            } else if (temp > 0.7) {
+                // 高温：随机选择
+                selected = continuations[Math.floor(Math.random() * continuations.length)];
+            } else {
+                // 中温：有一定随机性
+                selected = continuations[Math.floor(Math.random() * 4)];
+            }
+
+            result.style.display = 'block';
+            result.textContent = `输入：${input}\n温度：${temp}\n\n预测的下一个词："${selected}"\n\n完整输出：${input}${selected}`;
+        });
+
+        // 概率可视化
+        const words = ['很', '真', '不错', '好', '晴朗'];
+        function updateProbVisualization() {
+            const temp = parseFloat(document.getElementById('tempSlider').value);
+            document.getElementById('tempDisplay').textContent = temp.toFixed(1);
+
+            const container = document.getElementById('probVisualization');
+            container.innerHTML = '';
+
+            let probs;
+            if (temp < 0.3) {
+                // 低温：分布集中
+                probs = [60, 25, 8, 5, 2];
+            } else if (temp > 0.7) {
+                // 高温：分布均匀
+                probs = [22, 20, 21, 19, 18];
+            } else {
+                // 中温：适中
+                probs = [40, 25, 15, 12, 8];
+            }
+
+            const colors = ['#2563eb', '#7c3aed', '#06b6d4', '#10b981', '#f59e0b'];
+
+            words.forEach((word, i) => {
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    flex: 1;
+                    background: linear-gradient(to top, ${colors[i]}, ${colors[i]}88);
+                    border-radius: 6px 6px 0 0;
+                    position: relative;
+                    transition: height 0.3s ease;
+                    height: ${probs[i] * 2}px;
+                    min-height: 30px;
+                `;
+
+                const label = document.createElement('div');
+                label.textContent = word;
+                label.style.cssText = `
+                    position: absolute;
+                    bottom: -25px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                `;
+
+                const probLabel = document.createElement('div');
+                probLabel.textContent = probs[i] + '%';
+                probLabel.style.cssText = `
+                    position: absolute;
+                    top: -20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                `;
+
+                bar.appendChild(label);
+                bar.appendChild(probLabel);
+                container.appendChild(bar);
+            });
+        }
+
+        document.getElementById('tempSlider').addEventListener('input', updateProbVisualization);
+        updateProbVisualization();
+
+        // 章节测验逻辑
+        const ch02QuizAnswers = {
+            'ch02-quiz-1': { correct: '1', explanation: '正确！LLM的核心是逐字预测下一个token，进行"文字接龙"。它不会直接生成完整答案，而是一个字一个字地预测输出。' },
+            'ch02-quiz-2': { correct: '1', explanation: '正确！Temperature设为0时，模型始终选择概率最高的下一个词，输出结果完全确定，最保守。' },
+            'ch02-quiz-3': { correct: '1', explanation: '正确！"幻觉"是指模型编造看似合理但实际错误的信息。这是因为模型的本质是"概率猜词"，当训练数据缺失或上下文矛盾时，可能用看似合理的答案来"糊弄"你。' },
+            'ch02-quiz-4': { correct: '2', explanation: '正确！调高temperature参数会增加随机性，可能产生更多幻觉，这不是减少幻觉的方法。减少幻觉的方法包括：调低temperature、优化prompt提供精确上下文等。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch02QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

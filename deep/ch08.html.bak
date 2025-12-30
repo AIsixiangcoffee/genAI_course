@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 检索增强生成（RAG）</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch08" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：检索增强生成（RAG）</h1>
+
+        <div class="deep-content">
+            <h2>RAG工作流程演示</h2>
+            <p>体验RAG的完整流程：</p>
+
+            <div id="ragDemo" style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div class="form-group">
+                    <label class="form-label">输入问题</label>
+                    <input id="ragInput" class="form-input" type="text" placeholder="例如：什么是Transformer？" value="什么是Transformer？">
+                </div>
+                <button id="ragBtn" class="btn-generate">🔍 执行RAG流程</button>
+                <div id="ragResult" style="margin-top: 20px;"></div>
+            </div>
+
+            <h2>RAG vs 微调选择指南</h2>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="margin-bottom: 15px;">决策树</h3>
+                <div style="background: white; padding: 20px; border-radius: 8px;">
+                    <p><strong>问题1：数据是否经常变化？</strong></p>
+                    <p style="margin-left: 20px;">→ 是：选择 RAG</p>
+                    <p style="margin-left: 20px;">→ 否：继续</p>
+
+                    <p style="margin-top: 15px;"><strong>问题2：数据量是否很大（>100万文档）？</strong></p>
+                    <p style="margin-left: 20px;">→ 是：选择 RAG</p>
+                    <p style="margin-left: 20px;">→ 否：继续</p>
+
+                    <p style="margin-top: 15px;"><strong>问题3：是否需要特定格式或风格？</strong></p>
+                    <p style="margin-left: 20px;">→ 是：选择 微调</p>
+                    <p style="margin-left: 20px;">→ 否：选择 RAG</p>
+                </div>
+            </div>
+
+            <h2>RAG技术栈</h2>
+
+            <div style="display: grid; gap: 15px; margin: 20px 0;">
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #2563eb;">
+                    <h3 style="color: #2563eb;">📄 文档加载</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">LangChain Loaders, LlamaIndex</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #7c3aed;">
+                    <h3 style="color: #7c3aed;">✂️ 文本分割</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">RecursiveCharacterTextSplitter, TokenTextSplitter</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #06b6d4;">
+                    <h3 style="color: #06b6d4;">🔢 向量化</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">OpenAI Embeddings, HuggingFace Embeddings</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #10b981;">🗄️ 向量数据库</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Chroma, Pinecone, Weaviate, Qdrant, Milvus</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                    <h3 style="color: #f59e0b;">🔗 检索与生成</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">LangChain Chains, LlamaIndex Queries</p>
+                </div>
+            </div>
+
+            <h2>RAG应用示例代码</h2>
+
+            <div class="code-demo">
+                <div class="code-header">
+                    <span class="code-title">简单RAG实现（LangChain）</span>
+                    <button class="copy-btn" data-copy-target="code-rag">复制代码</button>
+                </div>
+                <pre class="code-block" id="code-rag"><code><span class="code-keyword">from</span> langchain.embeddings <span class="code-keyword">import</span> OpenAIEmbeddings
+<span class="code-keyword">from</span> langchain.vectorstores <span class="code-keyword">import</span> Chroma
+<span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> RetrievalQA
+
+<span class="code-comment"># 1. 加载文档</span>
+<span class="code-keyword">from</span> langchain.document_loaders <span class="code-keyword">import</span> TextLoader
+loader = TextLoader(<span class="code-string">"my_document.txt"</span>)
+documents = loader.<span class="code-function">load</span>()
+
+<span class="code-comment"># 2. 分割文档</span>
+<span class="code-keyword">from</span> langchain.text_splitter <span class="code-keyword">import</span> RecursiveCharacterTextSplitter
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=<span class="code-number">1000</span>,
+    chunk_overlap=<span class="code-number">200</span>
+)
+splits = text_splitter.<span class="code-function">split_documents</span>(documents)
+
+<span class="code-comment"># 3. 创建向量数据库</span>
+vectorstore = Chroma.<span class="code-function">from_documents</span>(
+    documents=splits,
+    embedding=OpenAIEmbeddings()
+)
+
+<span class="code-comment"># 4. 创建检索器</span>
+retriever = vectorstore.<span class="code-function">as_retriever</span>()
+
+<span class="code-comment"># 5. 创建QA链</span>
+qa_chain = RetrievalQA.<span class="code-function">from_chain_type</span>(
+    llm=ChatOpenAI(model=<span class="code-string">"gpt-3.5-turbo"</span>),
+    chain_type=<span class="code-string">"stuff"</span>,
+    retriever=retriever
+)
+
+<span class="code-comment"># 6. 查询</span>
+query = <span class="code-string">"什么是RAG？"</span>
+result = qa_chain.<span class="code-function">invoke</span>(query)
+<span class="code-function">print</span>(result[<span class="code-string">'result'</span>])</code></pre>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch08-quiz-1">
+                <div class="quiz-question">1. RAG的核心作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q1" value="0" class="quiz-radio">
+                        <span>加快模型训练速度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q1" value="1" class="quiz-radio">
+                        <span>通过检索外部文档增强LLM，提供准确上下文</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q1" value="2" class="quiz-radio">
+                        <span>减少模型参数量</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch08-quiz-2">
+                <div class="quiz-question">2. RAG相比微调的主要优势是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q2" value="0" class="quiz-radio">
+                        <span>无需重新训练模型，适合数据经常变化的场景</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q2" value="1" class="quiz-radio">
+                        <span>性能更强</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q2" value="2" class="quiz-radio">
+                        <span>完全免费</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch08-quiz-3">
+                <div class="quiz-question">3. 向量数据库在RAG中的作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q3" value="0" class="quiz-radio">
+                        <span>存储原始文档</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q3" value="1" class="quiz-radio">
+                        <span>存储文档向量，支持快速相似度检索</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q3" value="2" class="quiz-radio">
+                        <span>训练模型</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch08-quiz-4">
+                <div class="quiz-question">4. 何时应该选择RAG而不是微调？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q4" value="0" class="quiz-radio">
+                        <span>需要特定格式或风格</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q4" value="1" class="quiz-radio">
+                        <span>数据经常变化或数据量很大</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch08q4" value="2" class="quiz-radio">
+                        <span>需要改变模型的说话方式</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // RAG演示
+        document.getElementById('ragBtn').addEventListener('click', () => {
+            const input = document.getElementById('ragInput').value;
+            const result = document.getElementById('ragResult');
+
+            // 模拟RAG流程
+            result.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb;">
+                        <strong>步骤1：向量化查询</strong>
+                        <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-secondary);">将问题"${input}"转换为向量表示 [0.23, -0.15, 0.67, ...]</p>
+                    </div>
+                    <div style="text-align: center; color: var(--primary-color);">↓</div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #7c3aed;">
+                        <strong>步骤2：相似度检索</strong>
+                        <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-secondary);">在向量数据库中找到3个最相关的文档片段</p>
+                    </div>
+                    <div style="text-align: center; color: var(--primary-color);">↓</div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #06b6d4;">
+                        <strong>步骤3：构建增强提示</strong>
+                        <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-secondary);">将检索到的内容作为上下文添加到提示词中</p>
+                    </div>
+                    <div style="text-align: center; color: var(--primary-color);">↓</div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <strong>步骤4：LLM生成回答</strong>
+                        <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-secondary);">LLM基于增强的提示词生成准确回答</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        // 章节测验逻辑
+        const ch08QuizAnswers = {
+            'ch08-quiz-1': { correct: '1', explanation: '正确！RAG的核心作用是通过检索外部文档增强LLM，为模型提供准确的上下文信息，从而生成更可靠的回答。' },
+            'ch08-quiz-2': { correct: '0', explanation: '正确！RAG无需重新训练模型，只需更新文档库即可，特别适合数据经常变化的场景。相比微调，RAG更灵活、成本更低。' },
+            'ch08-quiz-3': { correct: '1', explanation: '正确！向量数据库存储文档的向量表示，支持快速相似度检索。当用户提问时，系统会查询向量数据库，找到最相关的文档片段。' },
+            'ch08-quiz-4': { correct: '1', explanation: '正确！当数据经常变化或数据量很大时，应该选择RAG。微调更适合需要特定格式、风格或说话方式的场景。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch08QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

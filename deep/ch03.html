@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 模型训练</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch03" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：模型训练</h1>
+
+        <div class="deep-content">
+            <h2>训练阶段排序游戏</h2>
+            <p>拖拽或点击来排列大模型训练的正确顺序：</p>
+
+            <div id="sortingGame" style="margin: 30px 0;">
+                <div id="phasesContainer" style="display: flex; gap: 15px; flex-wrap: wrap; min-height: 150px; padding: 20px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 20px;">
+                </div>
+                <div id="sortedPhases" style="display: flex; gap: 15px; flex-wrap: wrap; min-height: 150px; padding: 20px; background: white; border: 2px dashed var(--border-color); border-radius: 10px;">
+                </div>
+                <button id="checkOrderBtn" class="btn-generate" style="margin-top: 20px;">检查顺序</button>
+                <div id="orderFeedback" class="prompt-preview" style="display: none; margin-top: 15px;"></div>
+            </div>
+
+            <h2>三种训练方式对比</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">特征</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">预训练</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">微调</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">强化学习</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">数据量</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">海量（TB级）</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">较少（精选）</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">中等（偏好数据）</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">数据类型</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">互联网文本</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">问答对、任务数据</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">人类偏好排序</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">学习方式</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">自监督学习</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">监督学习</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">强化学习</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">目标</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">学习基础知识</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">掌握专业能力</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">对齐人类价值观</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">比喻</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">通识教育</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">专业培训</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">职业道德</td>
+                </tr>
+            </table>
+
+            <h2>RLHF工作流程</h2>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📝</div>
+                        <div><strong>1. 收集提示</strong></div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">用户编写提示</div>
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--primary-color);">→</div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🤖</div>
+                        <div><strong>2. 生成多个答案</strong></div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">模型生成4个回答</div>
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--primary-color);">→</div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">👥</div>
+                        <div><strong>3. 人类排序</strong></div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">标注员排序答案</div>
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--primary-color);">→</div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+                        <div><strong>4. 训练奖励模型</strong></div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">学习人类偏好</div>
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--primary-color);">→</div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🔄</div>
+                        <div><strong>5. 优化模型</strong></div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">RL循环优化</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch03-quiz-1">
+                <div class="quiz-question">1. 预训练的本质是什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q1" value="0" class="quiz-radio">
+                        <span>监督学习</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q2" value="1" class="quiz-radio">
+                        <span>自监督学习</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q2" value="2" class="quiz-radio">
+                        <span>无监督学习</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch03-quiz-2">
+                <div class="quiz-question">2. RLHF中的"HF"代表什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q2" value="0" class="quiz-radio">
+                        <span>Human Feedback（人类反馈）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q2" value="1" class="quiz-radio">
+                        <span>High Frequency（高频）</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q2" value="2" class="quiz-radio">
+                        <span>Host Function（主机功能）</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch03-quiz-3">
+                <div class="quiz-question">3. "Quality Is All You Need"强调的是微调的什么特点？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q3" value="0" class="quiz-radio">
+                        <span>需要大量数据</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q3" value="1" class="quiz-radio">
+                        <span>对资料质量要求很高</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch03q3" value="2" class="quiz-radio">
+                        <span>需要很长时间训练</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html#ch03" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 排序游戏
+        const phases = [
+            { id: 'finetune', name: '微调', icon: '🎓' },
+            { id: 'pretrain', name: '预训练', icon: '📚' },
+            { id: 'rlhf', name: '强化学习', icon: '🎯' }
+        ];
+
+        const correctOrder = ['pretrain', 'finetune', 'rlhf'];
+        let userOrder = [];
+
+        function initSortingGame() {
+            const container = document.getElementById('phasesContainer');
+            const sorted = document.getElementById('sortedPhases');
+
+            // 打乱顺序
+            const shuffled = [...phases].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(phase => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.dataset.id = phase.id;
+                card.style.cssText = `
+                    background: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    border: 2px solid var(--border-color);
+                    transition: all 0.2s;
+                    min-width: 120px;
+                    text-align: center;
+                    user-select: none;
+                `;
+                card.innerHTML = `
+                    <div style="font-size: 1.5rem;">${phase.icon}</div>
+                    <div style="font-weight: 500; margin-top: 5px;">${phase.name}</div>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (card.parentElement === container) {
+                        sorted.appendChild(card);
+                        userOrder.push(phase.id);
+                    } else {
+                        container.appendChild(card);
+                        userOrder = userOrder.filter(id => id !== phase.id);
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('checkOrderBtn').addEventListener('click', () => {
+            const feedback = document.getElementById('orderFeedback');
+            const sortedCards = document.querySelectorAll('#sortedPhases .phase-card');
+            const currentOrder = Array.from(sortedCards).map(card => card.dataset.id);
+
+            if (currentOrder.length < 3) {
+                feedback.style.display = 'block';
+                feedback.textContent = '请将所有阶段拖到下方区域后再检查';
+                feedback.className = 'prompt-preview';
+                return;
+            }
+
+            const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+
+            feedback.style.display = 'block';
+            if (isCorrect) {
+                feedback.className = 'prompt-preview';
+                feedback.style.borderLeftColor = 'var(--success-color)';
+                feedback.innerHTML = '✅ <strong>正确！</strong><br><br>大模型训练的正确顺序是：<br>1️⃣ 预训练 - 让模型"听得懂人话"<br>2️⃣ 微调 - 让模型"能干专业事"<br>3️⃣ 强化学习 - 让模型"守住道德线"';
+            } else {
+                feedback.className = 'prompt-preview';
+                feedback.style.borderLeftColor = '#ef4444';
+                feedback.innerHTML = '❌ <strong>顺序不对</strong><br><br>提示：先让模型学习基础知识，再让它掌握专业技能，最后让它学会"做人"。再试试看！';
+            }
+        });
+
+        initSortingGame();
+
+        // 章节测验逻辑
+        const ch03QuizAnswers = {
+            'ch03-quiz-1': { correct: '1', explanation: '正确！预训练的本质是自监督学习。它能从数据本身生成"伪标签"，无需外部标注。例如预测下一个词时，"饼干"就是从"我今天去超市买了"中提取的天然标签。' },
+            'ch03-quiz-2': { correct: '0', explanation: '正确！RLHF = Reinforcement Learning from Human Feedback，即"基于人类反馈的强化学习"。核心是让AI通过"试错-奖励"机制来学习人类偏好。' },
+            'ch03-quiz-3': { correct: '1', explanation: '正确！"Quality Is All You Need"强调的是质量。微调不需要大量资料，但对资料质量要求很高。Less Is More for Alignment。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch03QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

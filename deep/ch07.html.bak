@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 函数调用（FC）</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch07" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：函数调用（FC）</h1>
+
+        <div class="deep-content">
+            <h2>函数调用模拟演示</h2>
+            <p>体验LLM如何判断是否需要调用外部函数：</p>
+
+            <div class="prompt-generator">
+                <div class="form-group">
+                    <label class="form-label">输入问题</label>
+                    <input id="fcInput" class="form-input" type="text" placeholder="例如：今天上海天气怎么样？">
+                </div>
+                <button id="fcBtn" class="btn-generate">分析并执行</button>
+                <div id="fcResult" class="prompt-preview" style="display: none;"></div>
+            </div>
+
+            <h2>函数调用代码示例</h2>
+
+            <div class="code-demo">
+                <div class="code-header">
+                    <span class="code-title">Function Calling示例（OpenAI格式）</span>
+                    <button class="copy-btn" data-copy-target="code-fc">复制代码</button>
+                </div>
+                <pre class="code-block" id="code-fc"><code><span class="code-keyword">from</span> openai <span class="code-keyword">import</span> OpenAI
+
+client = OpenAI(api_key=<span class="code-string">"your-api-key"</span>)
+
+<span class="code-comment"># 定义可用的工具（函数）</span>
+tools = [
+    {
+        <span class="code-string">"type"</span>: <span class="code-string">"function"</span>,
+        <span class="code-string">"function"</span>: {
+            <span class="code-string">"name"</span>: <span class="code-string">"get_weather"</span>,
+            <span class="code-string">"description"</span>: <span class="code-string">"获取指定城市的天气信息"</span>,
+            <span class="code-string">"parameters"</span>: {
+                <span class="code-string">"type"</span>: <span class="code-string">"object"</span>,
+                <span class="code-string">"properties"</span>: {
+                    <span class="code-string">"location"</span>: {
+                        <span class="code-string">"type"</span>: <span class="code-string">"string"</span>,
+                        <span class="code-string">"description"</span>: <span class="code-string">"城市名称，例如：北京、上海"</span>
+                    }
+                },
+                <span class="code-string">"required"</span>: [<span class="code-string">"location"</span>]
+            }
+        }
+    }
+]
+
+<span class="code-comment"># 发送请求</span>
+response = client.chat.completions.<span class="code-function">create</span>(
+    model=<span class="code-string">"gpt-4"</span>,
+    messages=[
+        {<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: <span class="code-string">"今天上海天气怎么样？"</span>}
+    ],
+    tools=tools
+)
+
+<span class="code-comment"># 检查是否需要调用函数</span>
+<span class="code-keyword">if</span> response.choices[<span class="code-number">0</span>].message.tool_calls:
+    <span class="code-comment"># 提取函数调用信息</span>
+    tool_call = response.choices[<span class="code-number">0</span>].message.tool_calls[<span class="code-number">0</span>]
+    function_name = tool_call.function.name
+    function_args = <span class="code-function">eval</span>(tool_call.function.arguments)
+
+    <span class="code-comment"># 执行函数（这里需要你自己实现）</span>
+    <span class="code-keyword">if</span> function_name == <span class="code-string">"get_weather"</span>:
+        weather_result = <span class="code-function">get_weather</span>(function_args[<span class="code-string">"location"</span>])
+        <span class="code-function">print</span>(f<span class="code-string">"天气查询结果：{weather_result}"</span>)</code></pre>
+            </div>
+
+            <h2>常见应用场景</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary-color);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🌤️</div>
+                    <h3 style="margin-bottom: 8px;">实时查询</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">天气、股票、新闻等实时数据查询</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--secondary-color);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">💾</div>
+                    <h3 style="margin-bottom: 8px;">数据库操作</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">自然语言查询SQL数据库</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--accent-color);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">📅</div>
+                    <h3 style="margin-bottom: 8px;">日程管理</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">创建提醒、安排会议</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--success-color);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🔧</div>
+                    <h3 style="margin-bottom: 8px;">工具调用</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">计算器、发送邮件、API调用</p>
+                </div>
+            </div>
+
+            <h2>函数调用 vs 直接生成</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">方面</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">直接生成</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">函数调用</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">实时性</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">依赖训练数据</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">获取实时数据</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">准确性</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">可能产生幻觉</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">工具返回准确数据</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">适用场景</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">通用问答、创作</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">需要准确数据的任务</td>
+                </tr>
+            </table>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch07-quiz-1">
+                <div class="quiz-question">1. 函数调用（Function Calling）的主要作用是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q1" value="0" class="quiz-radio">
+                        <span>加快AI响应速度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q1" value="1" class="quiz-radio">
+                        <span>让AI能够调用外部工具，获取实时数据</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q1" value="2" class="quiz-radio">
+                        <span>减少API调用成本</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch07-quiz-2">
+                <div class="quiz-question">2. 函数调用相比直接生成的优势是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q2" value="0" class="quiz-radio">
+                        <span>速度更快</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q2" value="1" class="quiz-radio">
+                        <span>能获取实时准确数据，避免幻觉</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q2" value="2" class="quiz-radio">
+                        <span>完全免费</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch07-quiz-3">
+                <div class="quiz-question">3. 以下哪个是函数调用的典型应用场景？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q3" value="0" class="quiz-radio">
+                        <span>创意写作</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q3" value="1" class="quiz-radio">
+                        <span>实时天气查询</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q3" value="2" class="quiz-radio">
+                        <span>闲聊对话</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch07-quiz-4">
+                <div class="quiz-question">4. 在Function Calling中，LLM的角色是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q4" value="0" class="quiz-radio">
+                        <span>直接执行函数</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q4" value="1" class="quiz-radio">
+                        <span>判断是否需要调用函数，并提取函数参数</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch07q4" value="2" class="quiz-radio">
+                        <span>生成函数代码</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 函数调用模拟
+        document.getElementById('fcBtn').addEventListener('click', () => {
+            const input = document.getElementById('fcInput').value.trim();
+            const result = document.getElementById('fcResult');
+
+            if (!input) {
+                alert('请输入问题');
+                return;
+            }
+
+            const lower = input.toLowerCase();
+
+            // 判断是否需要调用函数
+            let needsFunction = false;
+            let functionName = '';
+            let functionParams = {};
+            let explanation = '';
+
+            if (lower.includes('天气') || lower.includes('气温')) {
+                needsFunction = true;
+                functionName = 'get_weather';
+                // 提取城市名
+                const cities = ['北京', '上海', '深圳', '杭州', '成都'];
+                for (const city of cities) {
+                    if (input.includes(city)) {
+                        functionParams.location = city;
+                        break;
+                    }
+                }
+                if (!functionParams.location) {
+                    functionParams.location = '未知城市';
+                }
+                explanation = `LLM识别出这是一个天气查询请求，需要调用外部API获取实时数据。`;
+            } else if (lower.includes('计算') || /\d+\s*[\+\-\*\/]\s*\d+/.test(input)) {
+                needsFunction = true;
+                functionName = 'calculator';
+                explanation = `LLM识别出这是一个数学计算请求，需要调用计算器函数。`;
+            } else if (lower.includes('几点') || lower.includes('时间')) {
+                needsFunction = true;
+                functionName = 'get_time';
+                explanation = `LLM识别出这是一个时间查询请求，需要调用系统时间函数。`;
+            } else {
+                explanation = `LLM判断这是一个常规对话，不需要调用外部函数，直接生成回复即可。`;
+            }
+
+            // 显示结果
+            let output = `📊 分析结果\n\n`;
+            output += `输入：${input}\n\n`;
+            output += `LLM分析：${explanation}\n\n`;
+
+            if (needsFunction) {
+                output += `✅ 需要调用函数\n`;
+                output += `函数名：${functionName}\n`;
+                if (Object.keys(functionParams).length > 0) {
+                    output += `参数：${JSON.stringify(functionParams, null, 2)}\n`;
+                }
+                output += `\n下一步：外部系统执行该函数，然后将结果返回给LLM，LLM组织语言回复用户。`;
+            } else {
+                output += `❌ 不需要调用函数\n`;
+                output += `LLM直接生成回复。`;
+            }
+
+            result.textContent = output;
+            result.style.display = 'block';
+        });
+
+        // 章节测验逻辑
+        const ch07QuizAnswers = {
+            'ch07-quiz-1': { correct: '1', explanation: '正确！函数调用的主要作用是让AI能够调用外部工具，获取实时数据。这样AI就能突破训练数据的限制，获得最新信息。' },
+            'ch07-quiz-2': { correct: '1', explanation: '正确！函数调用能获取实时准确数据，避免幻觉。直接生成依赖训练数据且可能产生幻觉，而函数调用通过工具返回准确结果。' },
+            'ch07-quiz-3': { correct: '1', explanation: '正确！实时天气查询是函数调用的典型应用场景。其他典型场景包括数据库查询、日程管理、计算器等需要准确数据的任务。' },
+            'ch07-quiz-4': { correct: '1', explanation: '正确！在Function Calling中，LLM判断是否需要调用函数，并从用户输入中提取函数参数。LLM不直接执行函数，而是返回结构化的调用信息。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch07QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>

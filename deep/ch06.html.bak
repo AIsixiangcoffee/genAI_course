@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深入了解 - 动手实践</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">生成式AI入门课程</span>
+        </div>
+    </header>
+
+    <main class="deep-page">
+        <div class="deep-header">
+            <a href="../index.html#ch06" class="back-btn">
+                <span>←</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <h1 class="deep-title">深入了解：动手实践</h1>
+
+        <div class="deep-content">
+            <h2>代码运行演示</h2>
+            <p>以下是调用大模型API的完整示例代码：</p>
+
+            <div class="code-demo">
+                <div class="code-header">
+                    <span class="code-title">完整的API调用示例</span>
+                    <button class="copy-btn" data-copy-target="code-full">复制代码</button>
+                </div>
+                <pre class="code-block" id="code-full"><code><span class="code-comment"># 安装依赖</span>
+<span class="code-comment"># pip install openai</span>
+
+<span class="code-keyword">from</span> openai <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">import</span> os
+
+<span class="code-comment"># 从环境变量读取API密钥（更安全）</span>
+api_key = os.<span class="code-function">getenv</span>(<span class="code-string">"DEEPSEEK_API_KEY"</span>)
+
+<span class="code-comment"># 初始化客户端</span>
+client = OpenAI(
+    api_key=api_key,
+    base_url=<span class="code-string">"https://api.deepseek.com"</span>
+)
+
+<span class="code-keyword">def</span> <span class="code-function">chat_with_ai</span>(message):
+    <span class="code-string">"""发送消息并获取AI回复"""</span>
+    <span class="code-keyword">try</span>:
+        response = client.chat.completions.<span class="code-function">create</span>(
+            model=<span class="code-string">"deepseek-chat"</span>,
+            messages=[
+                {<span class="code-string">"role"</span>: <span class="code-string">"system"</span>, <span class="code-string">"content"</span>: <span class="code-string">"你是一个友好的AI助手。"</span>},
+                {<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: message}
+            ],
+            temperature=<span class="code-number">0.7</span>,
+            max_tokens=<span class="code-number">500</span>
+        )
+        <span class="code-keyword">return</span> response.choices[<span class="code-number">0</span>].message.content
+    <span class="code-keyword">except</span> Exception <span class="code-keyword">as</span> e:
+        <span class="code-keyword">return</span> <span class="code-string">f"错误：{str(e)}"</span>
+
+<span class="code-comment"># 使用示例</span>
+<span class="code-keyword">if</span> __name__ == <span class="code-string">"__main__"</span>:
+    user_input = <span class="code-string">"请介绍一下Python编程语言的特点"</span>
+    <span class="code-function">print</span>(<span class="code-string">f"用户：{user_input}"</span>)
+    <span class="code-function">print</span>(<span class="code-string">f"AI：{chat_with_ai(user_input)}"</span>)</code></pre>
+            </div>
+
+            <h2>模拟AI对话</h2>
+            <p>体验与大模型的实时对话（模拟演示）：</p>
+
+            <div class="chat-demo">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-row">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="输入你的问题...">
+                    <button class="send-btn" id="sendBtn">发送</button>
+                </div>
+            </div>
+
+            <h2>不同调用方式对比</h2>
+
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: var(--bg-tertiary);">
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">特性</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">SDK/API调用</th>
+                    <th style="padding: 12px; border: 1px solid var(--border-color);">自然语言对话</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">交互方式</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">代码调用</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">对话界面</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">技术门槛</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">需要编程知识</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">零门槛</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">灵活性</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">高，可精确控制</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">有限</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">应用场景</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">应用开发、批量处理</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">日常问答、简单任务</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">成本</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">按token计费</td>
+                    <td style="padding: 12px; border: 1px solid var(--border-color);">通常免费</td>
+                </tr>
+            </table>
+
+            <h2>推荐学习路径</h2>
+
+            <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <strong>第1步：</strong> 熟悉Python基础语法
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <strong>第2步：</strong> 尝试使用网页版对话，理解提示词工程
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <strong>第3步：</strong> 申请API密钥，运行第一个示例
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <strong>第4步：</strong> 学习RAG、Agent等高级技术
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--success-color);">
+                        <strong>第5步：</strong> 构建自己的AI应用！
+                    </div>
+                </div>
+            </div>
+
+            <h2>章节测验</h2>
+
+            <div class="quiz-container" data-quiz-id="ch06-quiz-1">
+                <div class="quiz-question">1. 调用大模型API需要什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q1" value="0" class="quiz-radio">
+                        <span>只需要Python环境</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q1" value="1" class="quiz-radio">
+                        <span>API密钥和SDK库</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q1" value="2" class="quiz-radio">
+                        <span>付费订阅</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch06-quiz-2">
+                <div class="quiz-question">2. SDK/API调用相比自然语言对话的主要优势是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q2" value="0" class="quiz-radio">
+                        <span>操作更简单</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q2" value="1" class="quiz-radio">
+                        <span>灵活性高，可精确控制，适合应用开发</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q2" value="2" class="quiz-radio">
+                        <span>完全免费</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch06-quiz-3">
+                <div class="quiz-question">3. 学习AI应用开发的推荐路径是？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q3" value="0" class="quiz-radio">
+                        <span>直接开始构建复杂应用</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q3" value="1" class="quiz-radio">
+                        <span>Python基础 → 提示词工程 → API调用 → 高级技术</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q3" value="2" class="quiz-radio">
+                        <span>跳过基础直接学RAG和Agent</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz-container" data-quiz-id="ch06-quiz-4">
+                <div class="quiz-question">4. temperature参数控制什么？</div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q4" value="0" class="quiz-radio">
+                        <span>API调用速度</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q4" value="1" class="quiz-radio">
+                        <span>输出的随机性和多样性</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="ch06q4" value="2" class="quiz-radio">
+                        <span>token数量限制</span>
+                    </label>
+                </div>
+                <button class="submit-quiz-btn">提交答案</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- 返回首页按钮 -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="../index.html" class="back-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                <span>🏠</span>
+                <span>返回课程首页</span>
+            </a>
+        </div>
+
+        <!-- 社交分享 -->
+        <div class="share-buttons">
+            <a href="#" class="share-btn share-wechat" data-share-type="wechat">
+                <span>💬</span>
+                <span>分享到微信</span>
+            </a>
+            <a href="#" class="share-btn share-weibo" data-share-type="weibo">
+                <span>📱</span>
+                <span>分享到微博</span>
+            </a>
+            <a href="#" class="share-btn share-copy" data-share-type="copy">
+                <span>🔗</span>
+                <span>复制链接</span>
+            </a>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 聊天演示
+        const messages = document.getElementById('chatMessages');
+        const input = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        const responses = {
+            greeting: ['你好！我是AI助手。有什么我可以帮助你的吗？', '嗨！很高兴见到你。请问有什么问题？'],
+            weather: ['在实际应用中，天气查询会通过Function Calling调用实时天气API。这是一个很实用的功能！'],
+            code: ['编程是AI的强项之一。你可以让AI帮你写代码、解释代码、调试Bug等。'],
+            default: ['这是个很好的问题！在实际开发中，你会学到更多关于API调用的知识。', '感谢你的提问！建议你尝试自己动手运行示例代码，会学到更多。']
+        };
+
+        function addMessage(type, content) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${type}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'chat-avatar';
+            avatar.textContent = type === 'ai' ? '🤖' : '👤';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.textContent = content;
+
+            msgDiv.appendChild(avatar);
+            msgDiv.appendChild(bubble);
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function getResponse(msg) {
+            const lower = msg.toLowerCase();
+            if (lower.includes('你好') || lower.includes('hi')) {
+                return responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
+            }
+            if (lower.includes('天气')) {
+                return responses.weather[0];
+            }
+            if (lower.includes('代码') || lower.includes('编程')) {
+                return responses.code[0];
+            }
+            return responses.default[Math.floor(Math.random() * responses.default.length)];
+        }
+
+        function send() {
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage('user', msg);
+            input.value = '';
+
+            setTimeout(() => {
+                addMessage('ai', getResponse(msg));
+            }, 600);
+        }
+
+        sendBtn.addEventListener('click', send);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') send();
+        });
+
+        // 初始消息
+        setTimeout(() => {
+            addMessage('ai', '你好！我是你的AI学习助手。你可以问我关于API调用、编程学习等方面的问题。');
+        }, 500);
+
+        // 章节测验逻辑
+        const ch06QuizAnswers = {
+            'ch06-quiz-1': { correct: '1', explanation: '正确！调用大模型API需要API密钥和相应的SDK库（如OpenAI Python库）。API密钥用于身份验证，SDK库简化了调用过程。' },
+            'ch06-quiz-2': { correct: '1', explanation: '正确！SDK/API调用灵活性高，可精确控制参数，适合应用开发和批量处理。虽然需要编程知识，但能实现更复杂的功能。' },
+            'ch06-quiz-3': { correct: '1', explanation: '正确！推荐的学习路径是：Python基础 → 提示词工程 → API调用 → RAG、Agent等高级技术。循序渐进是最高效的学习方式。' },
+            'ch06-quiz-4': { correct: '1', explanation: '正确！temperature参数控制输出的随机性和多样性。值越高越随机创意，值越低越确定保守。' }
+        };
+
+        document.querySelectorAll('.submit-quiz-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = btn.closest('.quiz-container');
+                const selected = container.querySelector('.quiz-radio:checked');
+                const feedback = container.querySelector('.quiz-feedback');
+                const options = container.querySelectorAll('.quiz-option');
+
+                if (!selected) {
+                    alert('请先选择一个答案');
+                    return;
+                }
+
+                const quizId = container.getAttribute('data-quiz-id');
+                const quiz = ch06QuizAnswers[quizId];
+
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('show');
+
+                if (selected.value === quiz.correct) {
+                    feedback.classList.add('correct');
+                    feedback.innerHTML = `<strong>✓ 回答正确！</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.innerHTML = `<strong>✗ 回答错误</strong><p>${quiz.explanation}</p>`;
+                    options.forEach(opt => {
+                        if (opt.querySelector('.quiz-radio').value === quiz.correct) {
+                            opt.classList.add('correct');
+                        } else if (opt.querySelector('.quiz-radio').checked) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+                }
+
+                btn.disabled = true;
+                btn.textContent = '已完成';
+            });
+        });
+    </script>
+</body>
+</html>
